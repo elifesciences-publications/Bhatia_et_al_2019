@@ -3,7 +3,28 @@
 """
 Created on Mon Sep 17 14:15:20 2018
 
-@author: henrik
+@author: Henrik Åhl (henrik.aahl@slcu.cam.ac.uk)
+
+-------------------------------------------------------------------------------
+
+This code is produced for the publication "Quantitative analysis of auxin sensing 
+in leaf primordia argues against proposed role in regulating leaf dorsoventrality",
+submitted to eLife 18-06-2018, and authored by:
+
+- Neha Bhatia (bhatia@mpipz.mpg.de)
+- Henrik Åhl (henrik.aahl@slcu.cam.ac.uk)
+- Henrik Jönsson (henrik.jonsson@slcu.cam.ac.uk)
+- Marcus Heisler (marcus.heisler@sydney.edu.au)
+
+For queries relating to the paper, contact Marcus Heisler (marcus.heisler@sydney.edu.au).
+Questions related to the code are best addressed to Henrik Åhl (henrik.aahl@slcu.cam.ac.uk).
+
+-------------------------------------------------------------------------------
+
+This particular script deals with generating figures used in the above publication. 
+The user will need to set the `project_path` variable to point to the correct path.
+Figures are by default saved in <repository_path>/figures.
+
 """
 
 import os
@@ -15,6 +36,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import tifffile as tiff
+import matplotlib as mpl
 from scipy.stats import sem
 from sklearn.metrics import auc
 import matplotlib.pyplot as plt
@@ -33,7 +55,8 @@ img_files = listdir(img_dir, include='.tif')
 img_files.sort()
 
 # Read in all data to one frame
-frame = pd.concat([pd.read_csv(file_, index_col=None, header='infer', sep='\t') for file_ in data_files])
+frame = pd.concat([pd.read_csv(file_, index_col=None, header='infer', sep='\t') 
+                   for file_ in data_files])
 
 # Filter
 frame = frame[frame['size'] > 20]
@@ -50,14 +73,13 @@ ab = ab.sort_values(by='mean_ratio', ascending=True)
 
 print(ab.shape[0])
 print(ad.shape[0])
-
-
 print normaltest(ab.mean_ratio).pvalue
 print normaltest(ad.mean_ratio).pvalue
 print np.mean(ab.mean_ratio), np.std(ab.mean_ratio), sem(ab.mean_ratio)
 print np.mean(ad.mean_ratio), np.std(ad.mean_ratio), sem(ad.mean_ratio)
 print scipy.stats.ks_2samp(ad.mean_ratio, ab.mean_ratio)
-print scipy.stats.mannwhitneyu(ad.mean_ratio, ab.mean_ratio, use_continuity=True, alternative='two-sided')
+print scipy.stats.mannwhitneyu(ad.mean_ratio, ab.mean_ratio, use_continuity=True, 
+                               alternative='two-sided')
 
 # Plot things
 ###############################################################################
@@ -110,7 +132,8 @@ palette = plt.get_cmap('Set1')
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.step(b, a, color=palette(1), linewidth=2)
-ax.plot(np.linspace(0, 1, 100), np.linspace(0, 1, 100), color='gray', linewidth=2, linestyle='--')
+ax.plot(np.linspace(0, 1, 100), np.linspace(0, 1, 100), color='gray', linewidth=2, 
+        linestyle='--')
 plt.xlabel('Abaxial ranked fraction')
 plt.ylabel('Adaxial ranked fraction')
 ax.text(.05,.9, 'AUC = {0:.3g}'.format(auc(b, a, True)), fontsize=24)
@@ -129,7 +152,8 @@ sns.set(style='whitegrid', font_scale=2,
 plt.style.use('seaborn-whitegrid')
 palette = plt.get_cmap('Set1')
 ax = sns.violinplot(x="side", y="mean_ratio", data=frame,
-                    inner='box', width=.8, linewidth=2, palette='muted', bw=.2, cut=0)
+                    inner='box', width=.8, linewidth=2, palette='muted', bw=.2, 
+                    cut=0)
 ax.set(xticklabels=['Abaxial', 'Adaxial'])
 plt.xlabel('')
 plt.ylabel('Mean intensity ratio')
@@ -144,7 +168,8 @@ sns.set(style='whitegrid', font_scale=2,
 plt.style.use('seaborn-whitegrid')
 palette = plt.get_cmap('Set1')
 ax = sns.violinplot(x="side", y="median_ratio", data=frame,
-                    inner='box', width=.8, linewidth=2, palette='muted', bw=.2, cut=0)
+                    inner='box', width=.8, linewidth=2, palette='muted', bw=.2, 
+                    cut=0)
 ax.set(xticklabels=['Abaxial', 'Adaxial'])
 plt.xlabel('')
 plt.ylabel('Median intensity ratio')
@@ -159,7 +184,8 @@ sns.set(style='whitegrid', font_scale=2,
 plt.style.use('seaborn-whitegrid')
 palette = plt.get_cmap('Set1')
 ax = sns.violinplot(x="side", y="max_ratio", data=frame,
-                    inner='box', width=.8, linewidth=2, palette='muted', bw=.2, cut=0)
+                    inner='box', width=.8, linewidth=2, palette='muted', bw=.2, 
+                    cut=0)
 ax.set(xticklabels=['Abaxial', 'Adaxial'])
 plt.xlabel('')
 plt.ylabel('Maximum intensity ratio')
@@ -174,7 +200,8 @@ sns.set(style='whitegrid', font_scale=2,
 plt.style.use('seaborn-whitegrid')
 palette = plt.get_cmap('Set1')
 ax = sns.violinplot(x="side", y="min_ratio", data=frame,
-                    inner='box', width=.8, linewidth=2, palette='muted', bw=.2, cut=0)
+                    inner='box', width=.8, linewidth=2, palette='muted', bw=.2, 
+                    cut=0)
 ax.set(xticklabels=['Abaxial', 'Adaxial'])
 plt.xlabel('')
 plt.ylabel('Minimum intensity ratio')
@@ -211,7 +238,8 @@ for ii, fname in enumerate(img_files):
     f = tiff.TiffFile(fname)
     sample, leaf, side = os.path.basename(fname).split('_')[0:3]
     sample = int(sample)
-    data = frame.loc[(frame['sample'] == sample) & (frame['leaf'] == leaf) & (frame['side'] == side)]
+    data = frame.loc[(frame['sample'] == sample) & (frame['leaf'] == leaf) & 
+                     (frame['side'] == side)]
     ratios = (data.DII_mean / data.mDII_mean).values
     labels = data['label'].values
     
@@ -227,18 +255,20 @@ for ii, fname in enumerate(img_files):
     centroids = centroids.astype(np.uint16)
     ratio_plot[centroids[:,0], centroids[:,1], centroids[:,2]] = ratios
     
-    tiff.imsave(os.path.join(project_path, 'figures', 'spatial', os.path.basename(fname)[:-14] + '_ratio_centroids.tif'), 
-                dilate(np.max(ratio_plot, axis=0), size=5).astype(np.float32), dtype=np.float32, imagej=True,
-                resolution=1. / resolution[1:])
+    tiff.imsave(os.path.join(project_path, 'figures', 'spatial', os.path.basename(fname)[:-14] + 
+                             '_ratio_centroids.tif'), 
+                dilate(np.max(ratio_plot, axis=0), size=5).astype(np.float32), 
+                dtype=np.float32, imagej=True, resolution=1. / resolution[1:])
     
     # Plot full nuclei
     ratio_plot = np.zeros(lab_img.shape)
     for jj, label in enumerate(data.label):
         ratio_plot[lab_img == label] = ratios[jj]
     
-    tiff.imsave(os.path.join(project_path, 'figures', 'spatial', os.path.basename(fname)[:-14] + '_ratio_full.tif'), 
-                ratio_plot.astype(np.float32), resolution=1. / resolution[1:], imagej=True, 
-                metadata={'spacing' : resolution[0]})  
+    tiff.imsave(os.path.join(project_path, 'figures', 'spatial', os.path.basename(fname)[:-14] + 
+                             '_ratio_full.tif'), 
+                ratio_plot.astype(np.float32), resolution=1. / resolution[1:], 
+                imagej=True, metadata={'spacing' : resolution[0]})  
     
 files = listdir('/home/henrik/projects/r2d2_leaves/figures/spatial', include='ratio_centroids')
 files = natural_sort(files)
@@ -287,10 +317,14 @@ cbar_ax = fig.add_axes([0.15, 0.08, 0.675, 0.01])
 
 plt.style.use('seaborn-whitegrid')
 palette = plt.get_cmap('viridis')
-ax1 = sns.heatmap(a1, ax=ax1, vmax=1, cbar=False, xticklabels=[], yticklabels=[], mask=a1==0, cmap=palette)
-ax2 = sns.heatmap(b1, ax=ax2, vmax=1, cbar=False, xticklabels=[], yticklabels=[], mask=b1==0, cmap=palette)
-ax3 = sns.heatmap(a2, ax=ax3, vmax=1, cbar=False, xticklabels=[], yticklabels=[], mask=a2==0, cmap=palette)
-ax4 = sns.heatmap(b2, ax=ax4, vmax=1, cbar=False, xticklabels=[], yticklabels=[], mask=b2==0, cmap=palette)
+ax1 = sns.heatmap(a1, ax=ax1, vmax=1, cbar=False, xticklabels=[], yticklabels=[], 
+                  mask=a1==0, cmap=palette)
+ax2 = sns.heatmap(b1, ax=ax2, vmax=1, cbar=False, xticklabels=[], yticklabels=[], 
+                  mask=b1==0, cmap=palette)
+ax3 = sns.heatmap(a2, ax=ax3, vmax=1, cbar=False, xticklabels=[], yticklabels=[], 
+                  mask=a2==0, cmap=palette)
+ax4 = sns.heatmap(b2, ax=ax4, vmax=1, cbar=False, xticklabels=[], yticklabels=[], 
+                  mask=b2==0, cmap=palette)
 
 ax1.set_xlabel('Ad')    
 ax1.xaxis.set_label_position('top')
@@ -301,24 +335,22 @@ ax3.xaxis.set_label_position('top')
 ax4.set_xlabel('Ab')    
 ax4.xaxis.set_label_position('top')
 
-ax1.set_yticks(np.arange(b.T.shape[1] / len(ad) / 2, b.T.shape[1], b.T.shape[1] / len(ad))[:10])
+ax1.set_yticks(np.arange(b.T.shape[1] / len(ad) / 2, b.T.shape[1], b.T.shape[1] / 
+                         len(ad))[:10])
 ax1.set_yticklabels(xlabs[:(len(xlabs)/2)])
 ax4.yaxis.tick_right()
 ax4.yaxis.set_ticks_position('none') 
-ax4.set_yticks(np.arange(b.T.shape[1] / len(ad) / 2, b.T.shape[1], b.T.shape[1] / len(ad))[:10])
+ax4.set_yticks(np.arange(b.T.shape[1] / len(ad) / 2, b.T.shape[1], b.T.shape[1] / 
+                         len(ad))[:10])
 ax4.set_yticklabels(xlabs[(len(xlabs)/2):])
 
-import matplotlib as mpl
 cmap = mpl.cm.cool
 norm = mpl.colors.Normalize(vmin=0, vmax=1)
 cb1 = mpl.colorbar.ColorbarBase(cbar_ax, cmap=palette, norm=norm,
                                 orientation='horizontal')
-#cb1.ax.set_xticks([0, 1], ['0', '1'])
 cb1.ax.set_xticklabels([0, .2, .4, .6, .8, 1])
 cb1.ax.set_label('')
-#cb1.ax.set_label('Mean intensity ratio')
 fig.text(.325, 0.03, 'Mean intensity ratio')
-#cb1.set_ticks([])
 
 fig.savefig(os.path.join(project_path, 'figures', 'spatial_distribution_centroids.png'))
 fig.savefig(os.path.join(project_path, 'figures', 'spatial_distribution_centroids.pdf'))

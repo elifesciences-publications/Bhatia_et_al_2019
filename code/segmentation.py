@@ -1,5 +1,32 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+"""
+Created on Mon Sep 17 14:15:20 2018
+
+@author: Henrik Åhl (henrik.aahl@slcu.cam.ac.uk)
+
+-------------------------------------------------------------------------------
+
+This code is produced for the publication "Quantitative analysis of auxin sensing 
+in leaf primordia argues against proposed role in regulating leaf dorsoventrality",
+submitted to eLife 18-06-2018, and authored by:
+
+- Neha Bhatia (bhatia@mpipz.mpg.de)
+- Henrik Åhl (henrik.aahl@slcu.cam.ac.uk)
+- Henrik Jönsson (henrik.jonsson@slcu.cam.ac.uk)
+- Marcus Heisler (marcus.heisler@sydney.edu.au)
+
+For queries relating to the paper, contact Marcus Heisler (marcus.heisler@sydney.edu.au).
+Questions related to the code are best addressed to Henrik Åhl (henrik.aahl@slcu.cam.ac.uk).
+
+-------------------------------------------------------------------------------
+
+This particular script deals with peforming the nuclear segmentation used for the 
+quantitative analysis of auxin response using the R2D2 marker. Output is saved
+in <path-to-repo>/processed_data.
+
+"""
+
 import os
 project_path = '/home/henrik/projects/r2d2_leaves/'
 os.chdir(os.path.join(project_path, 'code'))
@@ -31,6 +58,7 @@ def get_resolution(fobj):
     return np.array([z, y, x])
 
 for fname in files:
+    ### Read in data
     sample, leaf, side = os.path.basename(fname).split('_')[0:3]
     sample = int(sample)
     f = tiff.TiffFile(fname)
@@ -40,6 +68,7 @@ for fname in files:
     resolution = get_resolution(f)
     del f
     
+    ### Use both channels for the segmentation
     int_img = data.copy()
     int_img[:, 1] /= np.max(int_img[:, 1])
     int_img[:, 2] /= np.max(int_img [:, 2])
@@ -48,7 +77,7 @@ for fname in files:
     int_img *= np.iinfo(np.uint16).max
     int_img = int_img.astype(np.uint16)
 
-    ### Preprocessing
+    # Preprocess by creating an initial binary mask
     footprint = get_footprint(3, 2)
     mask = int_img < 1. * mh.otsu(int_img, True)
     mask = remove_small_objects(mask, min_size=200, connectivity=2)
@@ -56,6 +85,7 @@ for fname in files:
     #mask = binary_opening(mask, footprint)
     int_img[mask] = 0
 
+    ### Smooth the signal
     smooth_img = int_img.copy()
     smooth_img = median_filter(smooth_img, footprint=footprint)
 
@@ -69,7 +99,8 @@ for fname in files:
 
     ### Merge and remove labels
     lab_img = merge_labels_distance(lab_img, smooth_img, threshold=1.5, resolution=resolution)
-    lab_img = merge_labels_small2closest(lab_img, threshold=25, distance_upper_bound=3., resolution=None) # 
+    lab_img = merge_labels_small2closest(lab_img, threshold=25, distance_upper_bound=3., 
+                                         resolution=None) # 
     lab_img = remove_labels_size(lab_img, min_size=200, max_size=None, resolution=None)
     #        lab_img = merge_labels_depth(lab_img, int_img, threshold=2000., connectivity=2)
     lab_img = remove_labels_intensity(lab_img, int_img, threshold=3000.)
@@ -89,9 +120,11 @@ for fname in files:
     rp1 = regionprops(lab_img, data[:, 1])
     rp2 = regionprops(lab_img, data[:, 2])
     ratios = [rp1[ii].mean_intensity / rp2[ii].mean_intensity for ii in xrange(len(rp1))]
-    
+
+    # Save to file    
     output_dir = os.path.join(project_path, 'processed_data', 'segmentation_data')
-    output_path = os.path.join(output_dir, os.path.splitext(os.path.basename(fname))[0] + '_segmentation_data.dat')
+    output_path = os.path.join(output_dir, os.path.splitext(os.path.basename(fname))[0] + 
+                               '_segmentation_data.dat')
     with open(output_path, 'w') as f:
         f.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(
                 'sample', 'leaf', 'side', 'label',
