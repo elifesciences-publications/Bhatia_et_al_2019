@@ -33,7 +33,7 @@ The laser settings used for the deconvolution are stored in <path-to-repo>/misc/
 
 
 import os
-project_path = '/home/henrik/projects/r2d2_leaves/'
+project_path = '/home/henrik/projects/papers/bhatia_et_al_2019/'
 os.chdir(os.path.join(project_path, 'code'))
 
 import numpy as np

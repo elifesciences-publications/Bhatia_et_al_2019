@@ -28,7 +28,7 @@ in <path-to-repo>/processed_data.
 """
 
 import os
-project_path = '/home/henrik/projects/r2d2_leaves/'
+project_path = '/home/henrik/projects/papers/bhatia_et_al_2019/'
 os.chdir(os.path.join(project_path, 'code'))
 
 import numpy as np
