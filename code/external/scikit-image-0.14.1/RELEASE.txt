@@ -1,0 +1,182 @@
+How to make a new release of ``skimage``
+========================================
+
+While following this guide, note down all the times that you need to consult a
+previous release manager, or that you find an instruction unclear. You will
+make a PR to update these notes after you are done with the release. ;-)
+
+- Check ``TODO.txt`` for any outstanding tasks.
+
+- Branch v<major>.<minor>.x from master. This is the "release branch", where
+  you will make your changes gearing up for release, and cherry-pick them as
+  appropriate to master.
+
+- In the master branch, update the version number in ``skimage/__init__.py``
+  to the next ``-dev`` version, commit, and push.
+
+- Back on the release branch, update the release notes:
+
+  1. Review and cleanup ``doc/release/release_dev.txt``.
+
+  2. Make a list of merges and contributors by running
+     ``doc/release/contribs.py <tag of previous release>``.
+
+  3. Paste this list at the end of the ``release_dev.txt``. Scan the PR titles
+     for highlights, deprecations, and API changes, and mention these in the
+     relevant sections of the notes.
+
+  4. Rename to ``doc/release/release_<major>.<minor>.txt``
+
+  5. Copy ``doc/release/release_template.txt`` to
+     ``doc/release/release_dev.txt`` for the next release.
+
+  6. Copy relevant deprecations from ``release_<major>_<minor>.txt``
+     to ``release_dev.txt``.
+
+- Update the version number in ``skimage/__init__.py`` and commit.
+
+- Update the docs:
+
+  - Edit ``doc/source/_static/docversions.js`` and commit
+  - Build a clean version of the docs.  Run ``python setup.py install`` in the
+    root dir, then ``rm -rf build; make html`` in the docs.
+  - Build using ``make gh-pages``.
+  - Update the symlink to ``stable``.
+  - Push upstream: ``git push origin gh-pages`` in ``doc/gh-pages``.
+
+- Add the version number as a tag in git::
+
+   git tag -s [-u <key-id>] v<major>.<minor>.0
+
+  (If you do not have a gpg key, use -m instead; it is important for
+  Debian packaging that the tags are annotated)
+
+- Push the new meta-data to github::
+
+   git push --tags upstream master
+
+  (where ``upstream`` is the name of the
+   ``github.com:scikit-image/scikit-image`` repository.)
+
+- Build the package wheels (pre-compiled binaries) for various platforms:
+
+  - Clone https://github.com/scikit-image/scikit-image-wheels.
+  - Update its ``.travis.yml`` file so that ``BUILD_COMMIT`` points to this
+    release tag (e.g. ``v0.13.0``).
+  - Commit and push.
+  - Wait until the corresponding wheels appear at
+    http://wheels.scikit-image.org (about 15 minutes).
+
+- Download the wheels and upload them to PyPI (you may need to ask Stéfan or
+  Juan to give you push access to the scikit-image package on PyPI).
+
+  - Make sure ``twine`` is available. You can install it with
+    ``pip install twine``.
+  - Download ``wheel-uploader`` [1]_ and place it on your PATH.
+  - Run ``tools/upload_wheels.sh``.
+
+.. [1] https://github.com/MacPython/terryfy/master/wheel-uploader
+
+- Publish the source distribution on PyPi::
+
+   python setup.py sdist
+   twine upload dist/scikit-image-<major>.<minor>.0.tar.gz
+
+- Update the web frontpage:
+  The webpage is kept in a separate repo: scikit-image-web
+
+  - Sync your branch with the remote repo: ``git pull``.
+    If you try to ``make gh-pages`` when your branch is out of sync, it
+    creates headaches.
+  - Add release date to ``index.rst`` under "Announcements".
+  - Add previous stable version documentation path to disallowed paths
+    in `robots.txt`
+  - Build using ``make gh-pages``.
+  - Push upstream: ``git push origin master`` in ``gh-pages``.
+
+- Update the development docs for the new version ``0.Xdev`` just like above
+
+- Post release notes on mailing lists, blog, Twitter, etc.
+
+  - scikit-image@python.org
+  - scipy-user@python.org
+  - scikit-learn@python.org
+
+- Update the version and the release date on wikipedia
+  https://en.wikipedia.org/wiki/Scikit-image
+
+Conda-forge
+-----------
+
+A scikit-image build recipe resides at
+http://github.com/conda-forge/scikit-image-feedstock. You should update it to
+point to the most recent release. You can do this by following these steps:
+
+- Fork the repository at http://github.com/conda-forge/scikit-image-feedstock,
+  and clone it to your machine.
+- Sprout a new branch, e.g. ``v<major>.<minor>``.
+- Find out the SHA256 hash of the source distribution. You can find this at
+  https://pypi.org/project/scikit-image/, or use the following commands:
+
+  - ``sha256sum path/to/scikit-image-*.tar.gz`` (Linux)
+  - ``shasum -a 256 dist/scikit-image-*.tar.gz`` (macOS)
+  - ``CertUtil -hashfile dist\scikit-image-*.tar.gz SHA256`` (Windows)
+
+- Edit the file ``recipe/meta.yaml``:
+
+  - Update the version number on the first line.
+  - Update the SHA256 value on line 10.
+  - If necessary, reset the build number to 0. (line 13)
+  - Update any requirements in the appropriate sections (build or run).
+    Note: don't remove ``numpy x.x``. This tells conda-smithy, conda-forge's
+    build system, that the library must be linked against NumPy at build time.
+
+- Commit the changes, push to your fork, and submit a pull request to the
+  upstream repo.
+
+Debian
+------
+
+The below instructions remain here for completeness. However, the Debian
+scientific team has kindly taken over package maintenance. Simply follow the
+procedure described at https://www.debian.org/Bugs/Reporting to report a "bug"
+that there is a new version of scikit-image out (specifying the version
+number), with severity set to "Wishlist".
+
+If you want to take matters into your own hands for some reason, follow the
+instructions detailed below to cut a Debian release yourself.
+
+- Tag the release as per instructions above.
+- git checkout debian
+- git merge v0.x.x
+- uscan <- not sure if this step is necessary
+- Update changelog (emacs has a good mode, requires package dpkg-dev-el)
+  - C-C C-v add new version, C-c C-c timestamp / save
+- git commit -m 'Changelog entry for 0.x.x'
+- git-buildpackage -uc -us -rfakeroot
+- Sign the changes: debsign skimage_0.x.x-x_amd64.changes
+- cd ../build-area && dput mentors skimage_0.x.x-x_amd64.changes
+- The package should now be available at:
+
+  http://mentors.debian.net/package/skimage
+
+For the last lines above to work, you need ``~/.gbp.conf``::
+
+  [DEFAULT]
+  upstream-tag = %(version)s
+
+  [git-buildpackage]
+  sign-tags = True
+  export-dir = ../build-area/
+  tarball-dir = ../tarballs/
+
+As well as ``~/dput.cf``::
+
+  [mentors]
+  fqdn = mentors.debian.net
+  incoming = /upload
+  method = http
+  allow_unsigned_uploads = 0
+  progress_indicator = 2
+  # Allow uploads for UNRELEASED packages
+  allowed_distributions = .*

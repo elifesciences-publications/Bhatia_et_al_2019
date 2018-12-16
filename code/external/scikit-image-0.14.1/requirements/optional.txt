@@ -1,0 +1,7 @@
+PySide; python_version <= '3.4'
+imread
+SimpleITK; python_version < '3.7'
+astropy
+tifffile
+imageio
+qtpy
