@@ -144,7 +144,6 @@ dependencies:
     - pillow==5.3.0
     - pycostanza==0.1.2
     - pywavelets==1.0.1
-    - scikit-image==0.14.1
     - scikit-learn==0.20.0
     - scipy==1.1.0
     - seaborn==0.9.0
