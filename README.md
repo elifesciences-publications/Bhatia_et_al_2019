@@ -1,11 +1,53 @@
 # Introduction
-This repository is made available for the publication "Quantitative analysis of auxin sensing in leaf primordia argues against proposed role in regulating leaf dorsoventrality",
-submitted to *eLife* 18-06-2018, and authored by:
+This repository is made available for the publication "Quantitative analysis of auxin 
+sensing in leaf primordia argues against proposed role in regulating leaf dorsoventrality",
+Neha Bhatia (bhatia@mpipz.mpg.de), Henrik Åhl (henrik.aahl@slcu.cam.ac.uk), 
+Henrik Jönsson (henrik.jonsson@slcu.cam.ac.uk), Marcus Heisler (marcus.heisler@sydney.edu.au)
 
-- Neha Bhatia (bhatia@mpipz.mpg.de)
-- Henrik Åhl (henrik.aahl@slcu.cam.ac.uk)
-- Henrik Jönsson (henrik.jonsson@slcu.cam.ac.uk)
-- Marcus Heisler (marcus.heisler@sydney.edu.au)
+# Repository
+
+## Reproducing data and figures
+
+The analysis and figure creation can be replicated by running the scripts
+
+```python
+code/deconvolution.py
+code/segmentation.py
+code/figure_generation.py
+```
+
+in succession, after required packages are installed (see below), and the 'project_path' 
+variable has been updated to fit with your installation. Note that the deconvolution 
+uses large amounts of RAM, which might prove troublesome for small-scale desktop computers.
+
+## Folders
+
+For simplicity, all original data, intermediate data, and figure files used for quantifications
+are also provided within this repository and files are organised as follows:
+
+```code: holds the python source code, where the main scripts are deconvolution.py,
+segmentation.py, and figure_generation.py. The environment.yml file can be used if
+installation is done via Anaconda (see below).```
+
+```code/external: local version of external packages needed to run the scripts (see below).```
+
+```figures: all figures produced by the scripts (figure_generation.py) in pdf and 
+png formats```
+
+```intermediate_data: Holds the (manually cropped) stacks for individual leaves
+before and after applying the deconvolution.py script. These files are input files to 
+the segmentation.py script.```
+
+```misc/laser_settings.txt: a text file with confocal settings used by the deconvolution.py 
+script```
+
+```processed_data: holds the extracted data from the segmentation.py script, and also
+stacks of labels showing the segmentation result.```
+
+```raw_data: contains the original data in lif and tiff formats. Note, all original data 
+for the submission is provided via https://idr.openmicroscopy.org/about/.```
+
+# Contact
 
 For queries relating to the paper, contact Marcus Heisler (marcus.heisler@sydney.edu.au).
 Questions related to the code are best addressed to Henrik Åhl (henrik.aahl@slcu.cam.ac.uk).
@@ -77,15 +119,3 @@ conda env create -f code/environment.yml
 
 from the repository root directory. The custom packages will have to be installed 
 as described above. 
-
-# Reproducing data and figures
-The data can be replicated by running the scripts
-
-```python
-code/deconvolution.py
-code/segmentation.py
-code/figure_generation.py
-```
-
-in succession. Note that the deconvolution uses large amounts of RAM, which might 
-prove troublesome for small-scale desktop computers.
