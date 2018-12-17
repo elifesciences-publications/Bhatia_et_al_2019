@@ -17,7 +17,8 @@ code/figure_generation.py
 ```
 
 in succession, after required packages are installed (see below), and the 'project_path' 
-variable has been updated to fit with your installation. Note that the deconvolution 
+variable has been updated (at the top of each script) to fit with your installation. 
+Note that the deconvolution 
 uses large amounts of RAM, which might prove troublesome for small-scale desktop computers.
 
 ## Folders
@@ -25,27 +26,29 @@ uses large amounts of RAM, which might prove troublesome for small-scale desktop
 For simplicity, all original data, intermediate data, and figure files used for quantifications
 are also provided within this repository and files are organised as follows:
 
-```code: holds the python source code, where the main scripts are deconvolution.py,
+```
+code: holds the python source code, where the main scripts are deconvolution.py,
 segmentation.py, and figure_generation.py. The environment.yml file can be used if
-installation is done via Anaconda (see below).```
+installation is done via Anaconda (see below).
 
-```code/external: local version of external packages needed to run the scripts (see below).```
+code/external: local version of external packages needed to run the scripts (see below).
 
-```figures: all figures produced by the scripts (figure_generation.py) in pdf and 
-png formats```
+figures: all figures produced by the scripts (figure_generation.py) in pdf and 
+png formats
 
-```intermediate_data: Holds the (manually cropped) stacks for individual leaves
+intermediate_data: Holds the (manually cropped) stacks for individual leaves
 before and after applying the deconvolution.py script. These files are input files to 
-the segmentation.py script.```
+the segmentation.py script.
 
-```misc/laser_settings.txt: a text file with confocal settings used by the deconvolution.py 
-script```
+misc/laser_settings.txt: a text file with confocal settings used by the deconvolution.py 
+script
 
-```processed_data: holds the extracted data from the segmentation.py script, and also
-stacks of labels showing the segmentation result.```
+processed_data: holds the extracted data from the segmentation.py script, and also
+stacks of labels showing the segmentation result.
 
-```raw_data: contains the original data in lif and tiff formats. Note, all original data 
-for the submission is provided via https://idr.openmicroscopy.org/about/.```
+raw_data: contains the original data in lif and tiff formats. Note, all original data 
+for the submission is provided via https://idr.openmicroscopy.org/about/.
+```
 
 # Contact
 
