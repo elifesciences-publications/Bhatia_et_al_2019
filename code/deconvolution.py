@@ -45,7 +45,7 @@ from multiprocessing import Pool
 import gc
 
 from misc import listdir, autocrop, get_resolution
-from external import psf
+from _psf import psf
 
 # Get paths
 data_dir = os.path.join(project_path, 'intermediate_data', 'cropped_leaves')
