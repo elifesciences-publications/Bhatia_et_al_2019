@@ -37,14 +37,15 @@ figures: all figures produced by the scripts (figure_generation.py) in pdf and
 png formats
 
 intermediate_data: Holds the (manually cropped) stacks for individual leaves
-before and after applying the deconvolution.py script. These files are input files to 
-the segmentation.py script.
+before and after applying the deconvolution.py script. The files produced by the deconvolution 
+are input files to the segmentation.py script.
 
 misc/laser_settings.txt: a text file with confocal settings used by the deconvolution.py 
 script
 
 processed_data: holds the extracted data from the segmentation.py script, and also
-stacks of labels showing the segmentation result.
+stacks of tiffs showing the segmentation result where each identified nuclei has a specific
+label for its voxels.
 
 raw_data: contains the original data in lif and tiff formats. Note, all original data 
 for the submission is provided via https://idr.openmicroscopy.org/about/.
@@ -58,7 +59,7 @@ Questions related to the code are best addressed to Henrik Åhl (henrik.aahl@slc
 # Installing prerequisites
 ## Custom packages
 ### Scikit-Image
-We utilized Scikit-Image (0.14.1) for several of the image quantification steps. 
+We utilized [Scikit-Image](https://scikit-image.org/) (0.14.1) for several of the image quantification steps. 
 However, the distribution as-is contains a bug which causes problems when deconvolving 
 images which contain values close or equal to 0. We therefore corrected this part 
 of the code by using the machine epsilon for close-to-zero values. Specifically, 
@@ -86,7 +87,8 @@ cd -
 ```
 
 ### PyCostanza
-For installation:
+[PyCostanza](https://gitlab.com/slcu/teamhj/costanza) is used for segmentation.
+For installation of the locally provided version:
 ```bash
 cd code/external/pycostanza-0.1.3
 python setup.py install
@@ -99,7 +101,7 @@ pip install pycostanza==0.1.3
 ```
 
 ### PSF
-For installation:
+For installation of [PSF](https://www.lfd.uci.edu/~gohlke/) using the locally provided version:
 ```bash
 cd code/external/psf-2018.02.07
 python setup.py build_ext --inplace
