@@ -52,7 +52,7 @@ stacks of tiffs showing the segmentation result where each identified nuclei has
 label for its voxels.
 
 raw_data: contains the original data in lif and tiff formats. Note, all original data 
-for the submission is provided via https://idr.openmicroscopy.org/about/.
+for the submission is provided via https://www.ebi.ac.uk/biostudies/studies/S-BSST223.
 ```
 
 # Contact
