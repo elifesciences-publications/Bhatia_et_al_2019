@@ -1,6 +1,10 @@
 # Introduction
-This repository is made available for the publication "Quantitative analysis of auxin 
-sensing in leaf primordia argues against proposed role in regulating leaf dorsoventrality",
+This code is associated with the paper from Bhatia et al., "Quantitative analysis 
+of auxin sensing in leaf primordia argues against proposed role in regulating leaf 
+dorsoventrality". eLife, 2018. http://dx.doi.org/10.7554/eLife.39298
+
+Authors and contact:
+
 Neha Bhatia (bhatia@mpipz.mpg.de), Henrik Åhl (henrik.aahl@slcu.cam.ac.uk), 
 Henrik Jönsson (henrik.jonsson@slcu.cam.ac.uk), Marcus Heisler (marcus.heisler@sydney.edu.au)
 
