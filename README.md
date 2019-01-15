@@ -61,6 +61,14 @@ For queries relating to the paper, contact Marcus Heisler (marcus.heisler@sydney
 Questions related to the code are best addressed to Henrik Åhl (henrik.aahl@slcu.cam.ac.uk).
 
 # Installing prerequisites
+## Decompressing raw_data.tar.bz2 and intermediate_data.tar.bz2
+`.tar.bz2` files must be decompressed before scripts can be run on the contained data:
+
+```sh
+$ tar -xjf raw_data.tar.bz2
+$ tar -xjf intermediate_data.tar.bz2
+```
+
 ## Custom packages
 ### Scikit-Image
 We utilized [Scikit-Image](https://scikit-image.org/) (0.14.1) for several of the image quantification steps. 
